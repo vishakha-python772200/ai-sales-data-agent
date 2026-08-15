@@ -17,9 +17,6 @@ from agents.prediction_agent import PredictionAgent
 
 st.set_page_config(page_title="Sales Data Agent", page_icon="◎", layout="centered")
 
-# ---------------------------------------------------------------------
-# Session state — drives the dynamic accent color (idle/processing/success/error)
-# ---------------------------------------------------------------------
 if "app_state" not in st.session_state:
     st.session_state.app_state = "idle"
 if "pipeline_result" not in st.session_state:
@@ -30,148 +27,47 @@ if "predict_result" not in st.session_state:
 HUES = {"idle": 214, "processing": 32, "success": 152, "error": 6}
 hue = HUES[st.session_state.app_state]
 
-# ---------------------------------------------------------------------
-# Apple-inspired CSS — glass cards, gradient pill buttons, dynamic accent
-# ---------------------------------------------------------------------
-st.markdown(f"""
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+st.markdown(
+    '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">',
+    unsafe_allow_html=True,
+)
+
+# NOTE: every rule below is on its own single line with zero blank lines.
+# Streamlit's markdown parser can split a raw <style> HTML block on blank
+# lines, which leaks the CSS as visible page text instead of applying it.
+css = f"""
 <style>
-:root {{
-    --hue: {hue};
-    --accent: hsl(var(--hue), 90%, 58%);
-    --accent-soft: hsla(var(--hue), 90%, 58%, 0.14);
-    --accent-glow: hsla(var(--hue), 90%, 58%, 0.45);
-}}
-
-html, body, [class*="css"] {{
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-}}
-
-.stApp {{
-    background: radial-gradient(ellipse 120% 60% at 50% -10%, #101018 0%, #000000 55%);
-    color: #F5F5F7;
-}}
-
-/* Hero */
-.hero-title {{
-    font-size: 42px; font-weight: 800; letter-spacing: -0.03em; text-align:center;
-    margin-bottom: 6px; margin-top: 12px;
-}}
-.hero-sub {{
-    text-align:center; color: rgba(245,245,247,0.6); font-size: 16px; margin-bottom: 22px;
-}}
-.state-tag {{
-    display:flex; align-items:center; justify-content:center; gap:8px; margin: 0 auto 28px;
-    font-family:'JetBrains Mono', monospace; font-size:12px; color: var(--accent);
-    background: var(--accent-soft); border:1px solid rgba(255,255,255,0.09);
-    padding: 7px 16px; border-radius:100px; width: fit-content;
-    transition: all 0.5s ease;
-}}
+:root {{ --hue: {hue}; --accent: hsl(var(--hue), 90%, 58%); --accent-soft: hsla(var(--hue), 90%, 58%, 0.14); --accent-glow: hsla(var(--hue), 90%, 58%, 0.45); }}
+html, body, [class*="css"] {{ font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }}
+.stApp {{ background: radial-gradient(ellipse 120% 60% at 50% -10%, #101018 0%, #000000 55%); color: #F5F5F7; }}
+.hero-title {{ font-size: 42px; font-weight: 800; letter-spacing: -0.03em; text-align:center; margin-bottom: 6px; margin-top: 12px; }}
+.hero-sub {{ text-align:center; color: rgba(245,245,247,0.6); font-size: 16px; margin-bottom: 22px; }}
+.state-tag {{ display:flex; align-items:center; justify-content:center; gap:8px; margin: 0 auto 28px; font-family:'JetBrains Mono', monospace; font-size:12px; color: var(--accent); background: var(--accent-soft); border:1px solid rgba(255,255,255,0.09); padding: 7px 16px; border-radius:100px; width: fit-content; transition: all 0.5s ease; }}
 .state-dot {{ width:6px; height:6px; border-radius:50%; background: var(--accent); box-shadow: 0 0 8px var(--accent-glow); }}
-
-/* Glass card wrapper for sections */
-.glass-card {{
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.09);
-    border-radius: 20px;
-    padding: 28px 26px;
-    margin-bottom: 20px;
-    backdrop-filter: blur(20px);
-}}
-.section-label {{
-    font-family:'JetBrains Mono', monospace; font-size:11px; color: rgba(245,245,247,0.4);
-    text-transform:uppercase; letter-spacing:0.1em; margin-bottom: 16px;
-}}
-
-/* File uploader styling */
-[data-testid="stFileUploader"] {{
-    border: 1.5px dashed rgba(255,255,255,0.16);
-    border-radius: 16px;
-    padding: 10px;
-    background: rgba(255,255,255,0.02);
-    transition: border-color 0.3s ease;
-}}
-[data-testid="stFileUploader"]:hover {{
-    border-color: var(--accent);
-}}
+.glass-card {{ background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.09); border-radius: 20px; padding: 28px 26px; margin-bottom: 20px; backdrop-filter: blur(20px); }}
+.section-label {{ font-family:'JetBrains Mono', monospace; font-size:11px; color: rgba(245,245,247,0.4); text-transform:uppercase; letter-spacing:0.1em; margin-bottom: 16px; }}
+[data-testid="stFileUploader"] {{ border: 1.5px dashed rgba(255,255,255,0.16); border-radius: 16px; padding: 10px; background: rgba(255,255,255,0.02); transition: border-color 0.3s ease; }}
+[data-testid="stFileUploader"]:hover {{ border-color: var(--accent); }}
 [data-testid="stFileUploaderDropzone"] {{ background: transparent; }}
-
-/* Text input */
-.stTextInput input {{
-    background: rgba(255,255,255,0.06) !important;
-    border: 1px solid rgba(255,255,255,0.1) !important;
-    border-radius: 12px !important;
-    color: #F5F5F7 !important;
-}}
+.stTextInput input {{ background: rgba(255,255,255,0.06) !important; border: 1px solid rgba(255,255,255,0.1) !important; border-radius: 12px !important; color: #F5F5F7 !important; }}
 .stTextInput input:focus {{ border-color: var(--accent) !important; }}
-
-/* --- Apple-style gradient pill buttons --- */
-div.stButton > button, div.stDownloadButton > button {{
-    font-family: 'Inter', sans-serif;
-    font-weight: 600;
-    font-size: 15px;
-    letter-spacing: -0.01em;
-    color: white;
-    background: linear-gradient(135deg, hsl(var(--hue), 90%, 58%), hsl(calc(var(--hue) + 30), 90%, 50%));
-    border: none;
-    border-radius: 100px;
-    padding: 12px 28px;
-    box-shadow: 0 4px 24px -6px var(--accent-glow);
-    transition: transform 0.2s cubic-bezier(.22,1,.36,1), box-shadow 0.4s ease;
-    width: 100%;
-}}
-div.stButton > button:hover, div.stDownloadButton > button:hover {{
-    transform: translateY(-1px);
-    box-shadow: 0 6px 30px -4px var(--accent-glow);
-    color: white;
-}}
-div.stButton > button:active, div.stDownloadButton > button:active {{
-    transform: scale(0.97);
-}}
-div.stButton > button:disabled {{
-    opacity: 0.35; box-shadow: none;
-}}
-
-/* Metric cards */
-[data-testid="stMetric"] {{
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.09);
-    border-radius: 16px;
-    padding: 16px 18px;
-}}
-[data-testid="stMetricValue"] {{
-    background: linear-gradient(135deg, hsl(152,70%,60%), hsl(172,70%,50%));
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-    font-weight: 700;
-}}
-
-/* Insight bullets */
-.insight-line {{
-    padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.08);
-    font-size: 14px; color: rgba(245,245,247,0.75); display:flex; gap: 10px;
-}}
+div.stButton > button, div.stDownloadButton > button {{ font-family: 'Inter', sans-serif; font-weight: 600; font-size: 15px; letter-spacing: -0.01em; color: white; background: linear-gradient(135deg, hsl(var(--hue), 90%, 58%), hsl(calc(var(--hue) + 30), 90%, 50%)); border: none; border-radius: 100px; padding: 12px 28px; box-shadow: 0 4px 24px -6px var(--accent-glow); transition: transform 0.2s cubic-bezier(.22,1,.36,1), box-shadow 0.4s ease; width: 100%; }}
+div.stButton > button:hover, div.stDownloadButton > button:hover {{ transform: translateY(-1px); box-shadow: 0 6px 30px -4px var(--accent-glow); color: white; }}
+div.stButton > button:active, div.stDownloadButton > button:active {{ transform: scale(0.97); }}
+div.stButton > button:disabled {{ opacity: 0.35; box-shadow: none; }}
+[data-testid="stMetric"] {{ background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.09); border-radius: 16px; padding: 16px 18px; }}
+[data-testid="stMetricValue"] {{ background: linear-gradient(135deg, hsl(152,70%,60%), hsl(172,70%,50%)); -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 700; }}
+.insight-line {{ padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.08); font-size: 14px; color: rgba(245,245,247,0.75); display:flex; gap: 10px; }}
 .insight-line:last-child {{ border-bottom: none; }}
 .insight-marker {{ color: var(--accent); font-weight: 700; }}
-
-/* Big combined download button container */
-.mega-download {{
-    background: linear-gradient(135deg, hsla(152,70%,45%,0.18), hsla(172,70%,45%,0.10));
-    border: 1px solid hsla(152,70%,55%,0.35);
-    border-radius: 20px;
-    padding: 26px;
-    text-align: center;
-    margin-top: 8px;
-}}
+.mega-download {{ background: linear-gradient(135deg, hsla(152,70%,45%,0.18), hsla(172,70%,45%,0.10)); border: 1px solid hsla(152,70%,55%,0.35); border-radius: 20px; padding: 26px; text-align: center; margin-top: 8px; }}
 .mega-download h3 {{ font-size: 18px; margin-bottom: 4px; }}
 .mega-download p {{ color: rgba(245,245,247,0.6); font-size: 13px; margin-bottom: 18px; }}
-
 hr {{ border-color: rgba(255,255,255,0.08); }}
 </style>
-""", unsafe_allow_html=True)
+"""
+st.markdown(css, unsafe_allow_html=True)
 
-# ---------------------------------------------------------------------
-# Hero
-# ---------------------------------------------------------------------
 state_labels = {"idle": "Idle", "processing": "Processing", "success": "Complete", "error": "Error"}
 st.markdown('<div class="hero-title">Sales Data Agent</div>', unsafe_allow_html=True)
 st.markdown('<div class="hero-sub">Upload raw sales data. Get it cleaned, analyzed, modeled — automatically.</div>', unsafe_allow_html=True)
@@ -180,9 +76,6 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# ---------------------------------------------------------------------
-# Upload section
-# ---------------------------------------------------------------------
 st.markdown('<div class="glass-card">', unsafe_allow_html=True)
 st.markdown('<div class="section-label">01 · Upload</div>', unsafe_allow_html=True)
 
@@ -192,9 +85,6 @@ target_column = st.text_input("Target column", value=config.TARGET_COLUMN, place
 run_clicked = st.button("Run pipeline", disabled=(uploaded_file is None), use_container_width=True)
 st.markdown('</div>', unsafe_allow_html=True)
 
-# ---------------------------------------------------------------------
-# Run pipeline
-# ---------------------------------------------------------------------
 if run_clicked and uploaded_file is not None:
     st.session_state.app_state = "processing"
     st.rerun()
@@ -211,7 +101,7 @@ if st.session_state.app_state == "processing" and uploaded_file is not None:
     progress = st.progress(0, text=stages[0])
     for i, label in enumerate(stages[:-1]):
         progress.progress(int((i + 1) / len(stages) * 100), text=label + "…")
-        time.sleep(0.15)  # light visual pacing; the real work happens in run_pipeline below
+        time.sleep(0.15)
 
     result = run_pipeline(target_column=target_column)
     progress.progress(100, text="Done")
@@ -220,9 +110,6 @@ if st.session_state.app_state == "processing" and uploaded_file is not None:
     st.session_state.app_state = "success" if result.get("success") else "error"
     st.rerun()
 
-# ---------------------------------------------------------------------
-# Results
-# ---------------------------------------------------------------------
 result = st.session_state.pipeline_result
 if result is not None:
     if result.get("success"):
@@ -246,9 +133,6 @@ if result is not None:
             st.caption("No insights returned.")
         st.markdown('</div>', unsafe_allow_html=True)
 
-        # -------------------------------------------------------------
-        # ONE combined download button — cleaned data + predictions + report
-        # -------------------------------------------------------------
         st.markdown('<div class="mega-download">', unsafe_allow_html=True)
         st.markdown('<h3>📦 Get everything</h3>', unsafe_allow_html=True)
         st.markdown('<p>Cleaned data, model report, and export bundle in one file</p>', unsafe_allow_html=True)
@@ -273,9 +157,6 @@ if result is not None:
         st.code(result.get("error"))
         st.markdown('</div>', unsafe_allow_html=True)
 
-# ---------------------------------------------------------------------
-# Predict on new data
-# ---------------------------------------------------------------------
 st.markdown("<hr>", unsafe_allow_html=True)
 st.markdown('<div class="glass-card">', unsafe_allow_html=True)
 st.markdown('<div class="section-label">03 · Predict on new data</div>', unsafe_allow_html=True)
