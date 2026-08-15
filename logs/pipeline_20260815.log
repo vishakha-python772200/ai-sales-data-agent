@@ -1,0 +1,35 @@
+2026-08-15 15:29:05 | INFO     | utils.file_handler | Loaded CSV: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\data\raw\88282ae7_customers-100.csv | shape=(100, 11)
+2026-08-15 15:29:05 | INFO     | DataSummaryAgent | ----- Starting DataSummaryAgent -----
+2026-08-15 15:29:06 | INFO     | DataSummaryAgent | Data summary generated: 100 rows, 11 columns, 0 duplicate rows found.
+2026-08-15 15:29:06 | INFO     | utils.file_handler | Saved JSON: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\reports/data_summary.json
+2026-08-15 15:29:06 | INFO     | DataSummaryAgent | ----- Finished DataSummaryAgent in 0.238s -----
+2026-08-15 15:29:06 | INFO     | CleaningAgent | ----- Starting CleaningAgent -----
+2026-08-15 15:29:06 | INFO     | CleaningAgent | Before cleaning: 0 duplicate rows, 0 columns with missing values
+2026-08-15 15:29:06 | INFO     | utils.file_handler | Saved CSV: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\data\cleaned\cleaned_sales_dataset.csv | shape=(100, 11)
+2026-08-15 15:29:06 | INFO     | CleaningAgent | Cleaning complete. Final shape: (100, 11)
+2026-08-15 15:29:06 | INFO     | CleaningAgent | ----- Finished CleaningAgent in 0.083s -----
+2026-08-15 15:29:06 | INFO     | EDAAgent | ----- Starting EDAAgent -----
+2026-08-15 15:29:15 | INFO     | EDAAgent | EDA report saved to: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\reports\eda_report.pdf
+2026-08-15 15:29:15 | INFO     | EDAAgent | EDA graphs saved to: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\outputs\graphs
+2026-08-15 15:29:15 | INFO     | EDAAgent | ----- Finished EDAAgent in 8.748s -----
+2026-08-15 15:29:15 | INFO     | FeatureEngineeringAgent | ----- Starting FeatureEngineeringAgent -----
+2026-08-15 15:29:15 | INFO     | FeatureEngineeringAgent | Extracted date features: ['Subscription Date_day', 'Subscription Date_month', 'Subscription Date_weekday', 'Subscription Date_year']
+2026-08-15 15:29:15 | INFO     | utils.file_handler | Saved CSV: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\data\processed\processed_sales_dataset.csv | shape=(100, 15)
+2026-08-15 15:29:15 | INFO     | FeatureEngineeringAgent | Feature engineering complete. Final shape: (100, 15)
+2026-08-15 15:29:15 | INFO     | FeatureEngineeringAgent | ----- Finished FeatureEngineeringAgent in 0.2s -----
+2026-08-15 15:29:15 | INFO     | EncodingAgent | ----- Starting EncodingAgent -----
+2026-08-15 15:29:15 | INFO     | EncodingAgent | Encoded 'Customer Id' using label encoding.
+2026-08-15 15:29:15 | INFO     | EncodingAgent | Encoded 'First Name' using label encoding.
+2026-08-15 15:29:15 | INFO     | EncodingAgent | Encoded 'Last Name' using label encoding.
+2026-08-15 15:29:15 | INFO     | EncodingAgent | Encoded 'Company' using label encoding.
+2026-08-15 15:29:15 | INFO     | EncodingAgent | Encoded 'City' using label encoding.
+2026-08-15 15:29:15 | INFO     | EncodingAgent | Encoded 'Country' using label encoding.
+2026-08-15 15:29:15 | INFO     | EncodingAgent | Encoded 'Phone 1' using label encoding.
+2026-08-15 15:29:15 | INFO     | EncodingAgent | Encoded 'Phone 2' using label encoding.
+2026-08-15 15:29:15 | INFO     | EncodingAgent | Encoded 'Email' using label encoding.
+2026-08-15 15:29:15 | INFO     | utils.file_handler | Saved pickle object: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\models\saved_models/encoders.pkl
+2026-08-15 15:29:15 | INFO     | utils.file_handler | Saved CSV: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\data\processed\processed_sales_dataset.csv | shape=(100, 14)
+2026-08-15 15:29:15 | INFO     | EncodingAgent | Encoding complete. Final shape: (100, 14)
+2026-08-15 15:29:15 | INFO     | EncodingAgent | ----- Finished EncodingAgent in 0.064s -----
+2026-08-15 15:29:15 | INFO     | FeatureSelectionAgent | ----- Starting FeatureSelectionAgent -----
+2026-08-15 15:29:15 | ERROR    | FeatureSelectionAgent | FeatureSelectionAgent FAILED after 0.0s: Missing required columns in DataFrame: ['Customer City, Customer Country, Married Status']

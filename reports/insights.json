@@ -1,0 +1,32 @@
+{
+    "summary": [
+        "'Quantity' has a strong influence on the prediction (importance score: 0.316).",
+        "'Sales' has a strong influence on the prediction (importance score: 0.203).",
+        "'gross income' has a strong influence on the prediction (importance score: 0.171).",
+        "'Tax 5%' has a strong influence on the prediction (importance score: 0.155).",
+        "'cogs' has a strong influence on the prediction (importance score: 0.147).",
+        "Model explains 99.3% of the variance \u2014 strong fit."
+    ],
+    "top_features": [
+        {
+            "feature": "Quantity",
+            "importance": 0.3156
+        },
+        {
+            "feature": "Sales",
+            "importance": 0.2027
+        },
+        {
+            "feature": "gross income",
+            "importance": 0.1708
+        },
+        {
+            "feature": "Tax 5%",
+            "importance": 0.1553
+        },
+        {
+            "feature": "cogs",
+            "importance": 0.147
+        }
+    ]
+}

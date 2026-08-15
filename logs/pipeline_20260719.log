@@ -1,0 +1,182 @@
+2026-07-19 12:38:46 | INFO     | utils.file_handler | Loaded CSV: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\data\raw\72d79d99_2026-03-14T10-48_export.csv | shape=(1000, 20)
+2026-07-19 12:38:46 | INFO     | DataSummaryAgent | ----- Starting DataSummaryAgent -----
+2026-07-19 12:38:46 | INFO     | DataSummaryAgent | Data summary generated: 1000 rows, 20 columns, 0 duplicate rows found.
+2026-07-19 12:38:46 | INFO     | utils.file_handler | Saved JSON: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\reports/data_summary.json
+2026-07-19 12:38:46 | INFO     | DataSummaryAgent | ----- Finished DataSummaryAgent in 0.357s -----
+2026-07-19 12:38:46 | INFO     | CleaningAgent | ----- Starting CleaningAgent -----
+2026-07-19 12:38:46 | INFO     | CleaningAgent | Before cleaning: 0 duplicate rows, 0 columns with missing values
+2026-07-19 12:38:46 | INFO     | utils.file_handler | Saved CSV: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\data\cleaned\cleaned_sales_dataset.csv | shape=(1000, 20)
+2026-07-19 12:38:46 | INFO     | CleaningAgent | Cleaning complete. Final shape: (1000, 20)
+2026-07-19 12:38:46 | INFO     | CleaningAgent | ----- Finished CleaningAgent in 0.301s -----
+2026-07-19 12:38:46 | INFO     | EDAAgent | ----- Starting EDAAgent -----
+2026-07-19 12:39:08 | INFO     | EDAAgent | EDA report saved to: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\reports\eda_report.pdf
+2026-07-19 12:39:08 | INFO     | EDAAgent | EDA graphs saved to: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\outputs\graphs
+2026-07-19 12:39:08 | INFO     | EDAAgent | ----- Finished EDAAgent in 21.728s -----
+2026-07-19 12:39:08 | INFO     | FeatureEngineeringAgent | ----- Starting FeatureEngineeringAgent -----
+2026-07-19 12:39:08 | INFO     | FeatureEngineeringAgent | Extracted date features: ['Date_day', 'Date_month', 'Date_weekday', 'Date_year']
+2026-07-19 12:39:08 | INFO     | utils.file_handler | Saved CSV: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\data\processed\processed_sales_dataset.csv | shape=(1000, 24)
+2026-07-19 12:39:08 | INFO     | FeatureEngineeringAgent | Feature engineering complete. Final shape: (1000, 24)
+2026-07-19 12:39:08 | INFO     | FeatureEngineeringAgent | ----- Finished FeatureEngineeringAgent in 0.209s -----
+2026-07-19 12:39:08 | INFO     | EncodingAgent | ----- Starting EncodingAgent -----
+2026-07-19 12:39:08 | INFO     | EncodingAgent | Encoded 'Invoice ID' using label encoding.
+2026-07-19 12:39:08 | INFO     | EncodingAgent | Encoded 'Branch' using onehot encoding.
+2026-07-19 12:39:08 | INFO     | EncodingAgent | Encoded 'City' using onehot encoding.
+2026-07-19 12:39:08 | INFO     | EncodingAgent | Encoded 'Customer type' using onehot encoding.
+2026-07-19 12:39:08 | INFO     | EncodingAgent | Encoded 'Gender' using onehot encoding.
+2026-07-19 12:39:08 | INFO     | EncodingAgent | Encoded 'Product line' using onehot encoding.
+2026-07-19 12:39:08 | INFO     | EncodingAgent | Encoded 'Time' using label encoding.
+2026-07-19 12:39:08 | INFO     | EncodingAgent | Encoded 'Payment' using onehot encoding.
+2026-07-19 12:39:08 | INFO     | EncodingAgent | Encoded 'Anomaly_Status' using onehot encoding.
+2026-07-19 12:39:08 | INFO     | EncodingAgent | Encoded 'Predicted_Type' using onehot encoding.
+2026-07-19 12:39:08 | INFO     | utils.file_handler | Saved pickle object: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\models\saved_models/encoders.pkl
+2026-07-19 12:39:08 | INFO     | utils.file_handler | Saved CSV: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\data\processed\processed_sales_dataset.csv | shape=(1000, 28)
+2026-07-19 12:39:08 | INFO     | EncodingAgent | Encoding complete. Final shape: (1000, 28)
+2026-07-19 12:39:09 | INFO     | EncodingAgent | ----- Finished EncodingAgent in 0.228s -----
+2026-07-19 12:39:09 | INFO     | FeatureSelectionAgent | ----- Starting FeatureSelectionAgent -----
+2026-07-19 12:39:09 | ERROR    | FeatureSelectionAgent | FeatureSelectionAgent FAILED after 0.002s: Missing required columns in DataFrame: ['Quantity\tTax 5%\tSales']
+2026-07-19 12:39:09 | DEBUG    | FeatureSelectionAgent | Traceback (most recent call last):
+  File "E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\agents\base_agent.py", line 55, in execute
+    result = self.run(*args, **kwargs)
+  File "E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\agents\feature_selection_agent.py", line 34, in run
+    validate_target_column(df, target_column)
+  File "E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\utils\validator.py", line 32, in validate_target_column
+    validate_columns_exist(df, [target_column])
+  File "E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\utils\validator.py", line 27, in validate_columns_exist
+    raise ValueError(f"Missing required columns in DataFrame: {missing}")
+ValueError: Missing required columns in DataFrame: ['Quantity\tTax 5%\tSales']
+
+2026-07-19 12:42:59 | INFO     | utils.file_handler | Loaded CSV: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\data\raw\88576c2e_2026-03-14T10-48_export.csv | shape=(1000, 20)
+2026-07-19 12:42:59 | INFO     | PredictionAgent | ----- Starting PredictionAgent -----
+2026-07-19 12:42:59 | ERROR    | utils.file_handler | Failed to load pickle at E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\models\saved_models\best_model.pkl: [Errno 2] No such file or directory: 'E:\\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\\Vishakha ml small project\\ai_agent\\models\\saved_models\\best_model.pkl'
+2026-07-19 12:42:59 | ERROR    | PredictionAgent | PredictionAgent FAILED after 0.0s: [Errno 2] No such file or directory: 'E:\\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\\Vishakha ml small project\\ai_agent\\models\\saved_models\\best_model.pkl'
+2026-07-19 12:42:59 | DEBUG    | PredictionAgent | Traceback (most recent call last):
+  File "E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\agents\base_agent.py", line 55, in execute
+    result = self.run(*args, **kwargs)
+  File "E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\agents\prediction_agent.py", line 30, in run
+    model = load_pickle(model_path)
+  File "E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\utils\file_handler.py", line 78, in load_pickle
+    with open(filepath, "rb") as f:
+FileNotFoundError: [Errno 2] No such file or directory: 'E:\\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\\Vishakha ml small project\\ai_agent\\models\\saved_models\\best_model.pkl'
+
+2026-07-19 14:08:27 | INFO     | utils.file_handler | Loaded CSV: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\data\raw\25591152_2026-03-14T10-48_export.csv | shape=(1000, 20)
+2026-07-19 14:08:27 | INFO     | DataSummaryAgent | ----- Starting DataSummaryAgent -----
+2026-07-19 14:08:28 | INFO     | DataSummaryAgent | Data summary generated: 1000 rows, 20 columns, 0 duplicate rows found.
+2026-07-19 14:08:28 | INFO     | utils.file_handler | Saved JSON: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\reports/data_summary.json
+2026-07-19 14:08:28 | INFO     | DataSummaryAgent | ----- Finished DataSummaryAgent in 0.216s -----
+2026-07-19 14:08:28 | INFO     | CleaningAgent | ----- Starting CleaningAgent -----
+2026-07-19 14:08:28 | INFO     | CleaningAgent | Before cleaning: 0 duplicate rows, 0 columns with missing values
+2026-07-19 14:08:28 | INFO     | utils.file_handler | Saved CSV: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\data\cleaned\cleaned_sales_dataset.csv | shape=(1000, 20)
+2026-07-19 14:08:28 | INFO     | CleaningAgent | Cleaning complete. Final shape: (1000, 20)
+2026-07-19 14:08:28 | INFO     | CleaningAgent | ----- Finished CleaningAgent in 0.181s -----
+2026-07-19 14:08:28 | INFO     | EDAAgent | ----- Starting EDAAgent -----
+2026-07-19 14:08:41 | INFO     | EDAAgent | EDA report saved to: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\reports\eda_report.pdf
+2026-07-19 14:08:41 | INFO     | EDAAgent | EDA graphs saved to: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\outputs\graphs
+2026-07-19 14:08:41 | INFO     | EDAAgent | ----- Finished EDAAgent in 12.732s -----
+2026-07-19 14:08:41 | INFO     | FeatureEngineeringAgent | ----- Starting FeatureEngineeringAgent -----
+2026-07-19 14:08:41 | INFO     | FeatureEngineeringAgent | Extracted date features: ['Date_day', 'Date_month', 'Date_weekday', 'Date_year']
+2026-07-19 14:08:41 | INFO     | utils.file_handler | Saved CSV: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\data\processed\processed_sales_dataset.csv | shape=(1000, 24)
+2026-07-19 14:08:41 | INFO     | FeatureEngineeringAgent | Feature engineering complete. Final shape: (1000, 24)
+2026-07-19 14:08:41 | INFO     | FeatureEngineeringAgent | ----- Finished FeatureEngineeringAgent in 0.183s -----
+2026-07-19 14:08:41 | INFO     | EncodingAgent | ----- Starting EncodingAgent -----
+2026-07-19 14:08:41 | INFO     | EncodingAgent | Encoded 'Invoice ID' using label encoding.
+2026-07-19 14:08:41 | INFO     | EncodingAgent | Encoded 'Branch' using onehot encoding.
+2026-07-19 14:08:41 | INFO     | EncodingAgent | Encoded 'City' using onehot encoding.
+2026-07-19 14:08:41 | INFO     | EncodingAgent | Encoded 'Customer type' using onehot encoding.
+2026-07-19 14:08:41 | INFO     | EncodingAgent | Encoded 'Gender' using onehot encoding.
+2026-07-19 14:08:41 | INFO     | EncodingAgent | Encoded 'Product line' using onehot encoding.
+2026-07-19 14:08:41 | INFO     | EncodingAgent | Encoded 'Time' using label encoding.
+2026-07-19 14:08:41 | INFO     | EncodingAgent | Encoded 'Payment' using onehot encoding.
+2026-07-19 14:08:41 | INFO     | EncodingAgent | Encoded 'Anomaly_Status' using onehot encoding.
+2026-07-19 14:08:41 | INFO     | EncodingAgent | Encoded 'Predicted_Type' using onehot encoding.
+2026-07-19 14:08:41 | INFO     | utils.file_handler | Saved pickle object: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\models\saved_models/encoders.pkl
+2026-07-19 14:08:41 | INFO     | utils.file_handler | Saved CSV: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\data\processed\processed_sales_dataset.csv | shape=(1000, 28)
+2026-07-19 14:08:41 | INFO     | EncodingAgent | Encoding complete. Final shape: (1000, 28)
+2026-07-19 14:08:41 | INFO     | EncodingAgent | ----- Finished EncodingAgent in 0.106s -----
+2026-07-19 14:08:41 | INFO     | FeatureSelectionAgent | ----- Starting FeatureSelectionAgent -----
+2026-07-19 14:08:41 | ERROR    | FeatureSelectionAgent | FeatureSelectionAgent FAILED after 0.0s: Missing required columns in DataFrame: ['cogs\tgross margin percentage\tgross income\tRating Unit price\tQuantity\tTax 5%\tSales']
+2026-07-19 14:08:41 | DEBUG    | FeatureSelectionAgent | Traceback (most recent call last):
+  File "E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\agents\base_agent.py", line 55, in execute
+    result = self.run(*args, **kwargs)
+  File "E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\agents\feature_selection_agent.py", line 34, in run
+    validate_target_column(df, target_column)
+  File "E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\utils\validator.py", line 32, in validate_target_column
+    validate_columns_exist(df, [target_column])
+  File "E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\utils\validator.py", line 27, in validate_columns_exist
+    raise ValueError(f"Missing required columns in DataFrame: {missing}")
+ValueError: Missing required columns in DataFrame: ['cogs\tgross margin percentage\tgross income\tRating Unit price\tQuantity\tTax 5%\tSales']
+
+2026-07-19 14:11:21 | INFO     | utils.file_handler | Loaded CSV: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\data\raw\38ff9d04_991f6e47_72d79d99_2026-03-14T10-48_export.csv | shape=(1000, 20)
+2026-07-19 14:11:21 | INFO     | DataSummaryAgent | ----- Starting DataSummaryAgent -----
+2026-07-19 14:11:21 | INFO     | DataSummaryAgent | Data summary generated: 1000 rows, 20 columns, 0 duplicate rows found.
+2026-07-19 14:11:21 | INFO     | utils.file_handler | Saved JSON: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\reports/data_summary.json
+2026-07-19 14:11:21 | INFO     | DataSummaryAgent | ----- Finished DataSummaryAgent in 0.101s -----
+2026-07-19 14:11:21 | INFO     | CleaningAgent | ----- Starting CleaningAgent -----
+2026-07-19 14:11:21 | INFO     | CleaningAgent | Before cleaning: 0 duplicate rows, 0 columns with missing values
+2026-07-19 14:11:21 | INFO     | utils.file_handler | Saved CSV: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\data\cleaned\cleaned_sales_dataset.csv | shape=(1000, 20)
+2026-07-19 14:11:21 | INFO     | CleaningAgent | Cleaning complete. Final shape: (1000, 20)
+2026-07-19 14:11:21 | INFO     | CleaningAgent | ----- Finished CleaningAgent in 0.141s -----
+2026-07-19 14:11:21 | INFO     | EDAAgent | ----- Starting EDAAgent -----
+2026-07-19 14:11:34 | INFO     | EDAAgent | EDA report saved to: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\reports\eda_report.pdf
+2026-07-19 14:11:34 | INFO     | EDAAgent | EDA graphs saved to: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\outputs\graphs
+2026-07-19 14:11:34 | INFO     | EDAAgent | ----- Finished EDAAgent in 12.623s -----
+2026-07-19 14:11:34 | INFO     | FeatureEngineeringAgent | ----- Starting FeatureEngineeringAgent -----
+2026-07-19 14:11:34 | INFO     | FeatureEngineeringAgent | Extracted date features: ['Date_day', 'Date_month', 'Date_weekday', 'Date_year']
+2026-07-19 14:11:34 | INFO     | utils.file_handler | Saved CSV: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\data\processed\processed_sales_dataset.csv | shape=(1000, 24)
+2026-07-19 14:11:34 | INFO     | FeatureEngineeringAgent | Feature engineering complete. Final shape: (1000, 24)
+2026-07-19 14:11:34 | INFO     | FeatureEngineeringAgent | ----- Finished FeatureEngineeringAgent in 0.054s -----
+2026-07-19 14:11:34 | INFO     | EncodingAgent | ----- Starting EncodingAgent -----
+2026-07-19 14:11:34 | INFO     | EncodingAgent | Encoded 'Invoice ID' using label encoding.
+2026-07-19 14:11:34 | INFO     | EncodingAgent | Encoded 'Branch' using onehot encoding.
+2026-07-19 14:11:34 | INFO     | EncodingAgent | Encoded 'City' using onehot encoding.
+2026-07-19 14:11:34 | INFO     | EncodingAgent | Encoded 'Customer type' using onehot encoding.
+2026-07-19 14:11:34 | INFO     | EncodingAgent | Encoded 'Gender' using onehot encoding.
+2026-07-19 14:11:34 | INFO     | EncodingAgent | Encoded 'Product line' using onehot encoding.
+2026-07-19 14:11:34 | INFO     | EncodingAgent | Encoded 'Time' using label encoding.
+2026-07-19 14:11:34 | INFO     | EncodingAgent | Encoded 'Payment' using onehot encoding.
+2026-07-19 14:11:34 | INFO     | EncodingAgent | Encoded 'Anomaly_Status' using onehot encoding.
+2026-07-19 14:11:34 | INFO     | EncodingAgent | Encoded 'Predicted_Type' using onehot encoding.
+2026-07-19 14:11:34 | INFO     | utils.file_handler | Saved pickle object: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\models\saved_models/encoders.pkl
+2026-07-19 14:11:34 | INFO     | utils.file_handler | Saved CSV: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\data\processed\processed_sales_dataset.csv | shape=(1000, 28)
+2026-07-19 14:11:34 | INFO     | EncodingAgent | Encoding complete. Final shape: (1000, 28)
+2026-07-19 14:11:34 | INFO     | EncodingAgent | ----- Finished EncodingAgent in 0.109s -----
+2026-07-19 14:11:34 | INFO     | FeatureSelectionAgent | ----- Starting FeatureSelectionAgent -----
+2026-07-19 14:11:34 | INFO     | FeatureSelectionAgent | Dropped zero-variance columns: ['gross margin percentage', 'Date_year']
+2026-07-19 14:11:34 | INFO     | FeatureSelectionAgent | Dropped highly correlated columns (>0.95): ['Sales', 'cogs', 'gross income']
+2026-07-19 14:11:34 | INFO     | FeatureSelectionAgent | Feature importance ranking computed for 9 features.
+2026-07-19 14:11:34 | INFO     | utils.file_handler | Saved JSON: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\reports/feature_importance_ranking.json
+2026-07-19 14:11:34 | INFO     | utils.file_handler | Saved CSV: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\data\processed\processed_sales_dataset.csv | shape=(1000, 28)
+2026-07-19 14:11:34 | INFO     | FeatureSelectionAgent | Feature selection complete. Final shape: (1000, 28)
+2026-07-19 14:11:34 | INFO     | FeatureSelectionAgent | ----- Finished FeatureSelectionAgent in 0.232s -----
+2026-07-19 14:11:34 | INFO     | ModelSelectionAgent | ----- Starting ModelSelectionAgent -----
+2026-07-19 14:11:34 | INFO     | ModelSelectionAgent | LinearRegression: mean r2=0.7718
+2026-07-19 14:11:35 | INFO     | ModelSelectionAgent | DecisionTreeRegressor: mean r2=0.9804
+2026-07-19 14:11:43 | INFO     | ModelSelectionAgent | RandomForestRegressor: mean r2=0.9911
+2026-07-19 14:11:46 | INFO     | ModelSelectionAgent | GradientBoostingRegressor: mean r2=0.9878
+2026-07-19 14:11:46 | INFO     | ModelSelectionAgent | Best model selected: RandomForestRegressor (score=0.9911)
+2026-07-19 14:11:46 | INFO     | utils.file_handler | Saved JSON: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\reports/model_selection_scores.json
+2026-07-19 14:11:46 | INFO     | ModelSelectionAgent | ----- Finished ModelSelectionAgent in 12.259s -----
+2026-07-19 14:11:46 | INFO     | TrainingAgent | ----- Starting TrainingAgent -----
+2026-07-19 14:11:46 | INFO     | TrainingAgent | Training RandomForestRegressor on 800 rows, 14 features...
+2026-07-19 14:11:48 | INFO     | utils.file_handler | Saved pickle object: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\models\saved_models\best_model.pkl
+2026-07-19 14:11:48 | INFO     | utils.file_handler | Saved JSON: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\models\saved_models\model_metadata.json
+2026-07-19 14:11:48 | INFO     | TrainingAgent | Model trained and saved to E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\models\saved_models\best_model.pkl
+2026-07-19 14:11:48 | INFO     | TrainingAgent | ----- Finished TrainingAgent in 1.779s -----
+2026-07-19 14:11:48 | INFO     | EvaluationAgent | ----- Starting EvaluationAgent -----
+2026-07-19 14:11:48 | INFO     | EvaluationAgent | Evaluation metrics (regression): {'r2_score': 0.9934, 'mae': 1.5972, 'rmse': 2.2156}
+2026-07-19 14:11:48 | INFO     | utils.file_handler | Saved JSON: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\reports/evaluation_metrics.json
+2026-07-19 14:11:48 | INFO     | EvaluationAgent | ----- Finished EvaluationAgent in 0.042s -----
+2026-07-19 14:11:48 | INFO     | InsightAgent | ----- Starting InsightAgent -----
+2026-07-19 14:11:48 | INFO     | InsightAgent | Generated 6 insight statements.
+2026-07-19 14:11:48 | INFO     | utils.file_handler | Saved JSON: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\reports/insights.json
+2026-07-19 14:11:48 | INFO     | InsightAgent | ----- Finished InsightAgent in 0.038s -----
+2026-07-19 14:11:48 | INFO     | ReportAgent | ----- Starting ReportAgent -----
+2026-07-19 14:11:49 | INFO     | ReportAgent | Final model report saved to: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\reports\model_report.pdf
+2026-07-19 14:11:49 | INFO     | ReportAgent | ----- Finished ReportAgent in 0.538s -----
+2026-07-19 14:11:49 | INFO     | ExportAgent | ----- Starting ExportAgent -----
+2026-07-19 14:11:49 | INFO     | ExportAgent | Copied E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\data\cleaned\cleaned_sales_dataset.csv -> E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\outputs\cleaned_csv
+2026-07-19 14:11:49 | WARNING  | ExportAgent | Skipped export, file not found: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\data\predictions\predictions_output.csv
+2026-07-19 14:11:49 | INFO     | ExportAgent | Copied E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\models\saved_models\best_model.pkl -> E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\outputs\model
+2026-07-19 14:11:49 | INFO     | ExportAgent | Copied E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\models\saved_models\model_metadata.json -> E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\outputs\model
+2026-07-19 14:11:49 | INFO     | ExportAgent | Copied E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\reports\eda_report.pdf -> E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\outputs\reports
+2026-07-19 14:11:49 | WARNING  | ExportAgent | Skipped export, file not found: E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\reports\insight_report.pdf
+2026-07-19 14:11:49 | INFO     | ExportAgent | Copied E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\reports\model_report.pdf -> E:\VISHAKHA PYTHON ALL IMPORTANT DATA VERY IMPORTANT DATA\Vishakha ml small project\ai_agent\outputs\reports

@@ -1,0 +1,143 @@
+{
+    "shape": {
+        "rows": 100,
+        "columns": 11
+    },
+    "column_names": [
+        "Index",
+        "Customer Id",
+        "First Name",
+        "Last Name",
+        "Company",
+        "City",
+        "Country",
+        "Phone 1",
+        "Phone 2",
+        "Email",
+        "Subscription Date"
+    ],
+    "dtypes": {
+        "Index": "int64",
+        "Customer Id": "object",
+        "First Name": "object",
+        "Last Name": "object",
+        "Company": "object",
+        "City": "object",
+        "Country": "object",
+        "Phone 1": "object",
+        "Phone 2": "object",
+        "Email": "object",
+        "Subscription Date": "object"
+    },
+    "missing_values": {
+        "Index": 0,
+        "Customer Id": 0,
+        "First Name": 0,
+        "Last Name": 0,
+        "Company": 0,
+        "City": 0,
+        "Country": 0,
+        "Phone 1": 0,
+        "Phone 2": 0,
+        "Email": 0,
+        "Subscription Date": 0
+    },
+    "missing_percentage": {
+        "Index": 0.0,
+        "Customer Id": 0.0,
+        "First Name": 0.0,
+        "Last Name": 0.0,
+        "Company": 0.0,
+        "City": 0.0,
+        "Country": 0.0,
+        "Phone 1": 0.0,
+        "Phone 2": 0.0,
+        "Email": 0.0,
+        "Subscription Date": 0.0
+    },
+    "duplicate_rows": 0,
+    "numeric_summary": {
+        "Index": {
+            "count": 100.0,
+            "mean": 50.5,
+            "std": 29.01,
+            "min": 1.0,
+            "25%": 25.75,
+            "50%": 50.5,
+            "75%": 75.25,
+            "max": 100.0
+        }
+    },
+    "categorical_summary": {
+        "Customer Id": {
+            "DD37Cf93aecA6Dc": 1,
+            "1Ef7b82A4CAAD10": 1,
+            "6F94879bDAfE5a6": 1,
+            "5Cef8BFA16c5e3c": 1,
+            "053d585Ab6b3159": 1
+        },
+        "First Name": {
+            "Sheryl": 2,
+            "Joanna": 2,
+            "Faith": 2,
+            "Shane": 2,
+            "Tom": 2
+        },
+        "Last Name": {
+            "Foley": 2,
+            "Mata": 2,
+            "Greer": 2,
+            "Lozano": 1,
+            "Baxter": 1
+        },
+        "Company": {
+            "Simon LLC": 2,
+            "Vega-Gentry": 1,
+            "Rasmussen Group": 1,
+            "Murillo-Perry": 1,
+            "Dominguez, Mcmillan and Donovan": 1
+        },
+        "City": {
+            "East Leonard": 1,
+            "East Jimmychester": 1,
+            "Isabelborough": 1,
+            "Bensonview": 1,
+            "West Priscilla": 1
+        },
+        "Country": {
+            "Solomon Islands": 4,
+            "Sri Lanka": 2,
+            "Oman": 2,
+            "Togo": 2,
+            "Dominican Republic": 2
+        },
+        "Phone 1": {
+            "229.077.5154": 1,
+            "5153435776": 1,
+            "-1199": 1,
+            "001-808-617-6467x12895": 1,
+            "001-234-203-0635x76146": 1
+        },
+        "Phone 2": {
+            "397.884.0519x718": 1,
+            "686-620-1820x944": 1,
+            "(496)978-3969x58947": 1,
+            "-9892": 1,
+            "001-199-446-3860x3486": 1
+        },
+        "Email": {
+            "zunigavanessa@smith.info": 1,
+            "vmata@colon.com": 1,
+            "beckycarr@hogan.com": 1,
+            "stanleyblackwell@benson.org": 1,
+            "colinalvarado@miles.net": 1
+        },
+        "Subscription Date": {
+            "4/23/2021": 2,
+            "12/2/2021": 2,
+            "1/13/2022": 2,
+            "5/15/2022": 2,
+            "4/17/2021": 1
+        }
+    }
+}

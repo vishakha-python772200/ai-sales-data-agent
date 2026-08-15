@@ -1,0 +1,6 @@
+{
+    "LinearRegression": 0.7718,
+    "DecisionTreeRegressor": 0.9804,
+    "RandomForestRegressor": 0.9911,
+    "GradientBoostingRegressor": 0.9878
+}

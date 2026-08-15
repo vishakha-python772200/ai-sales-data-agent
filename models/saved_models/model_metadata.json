@@ -1,0 +1,23 @@
+{
+    "model_name": "RandomForestRegressor",
+    "task_type": "regression",
+    "trained_at": "2026-07-19T14:11:48.745746",
+    "n_features": 14,
+    "feature_names": [
+        "Unnamed: 0",
+        "Invoice ID",
+        "Quantity",
+        "Tax 5%",
+        "Time",
+        "Rating",
+        "Date_month",
+        "Date_day",
+        "Date_weekday",
+        "Sales",
+        "cogs",
+        "gross margin percentage",
+        "gross income",
+        "Date_year"
+    ],
+    "n_training_rows": 800
+}

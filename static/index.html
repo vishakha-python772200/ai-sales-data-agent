@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pipeline — Sales Intelligence</title>
+<style>
+  :root{
+    --bg-0:#000000;
+    --bg-1:#0a0a0d;
+    --bg-2:#111114;
+    --line:rgba(255,255,255,0.08);
+    --glass:rgba(255,255,255,0.045);
+    --glass-hover:rgba(255,255,255,0.075);
+    --text-0:#f5f5f7;
+    --text-1:#a1a1a6;
+    --text-2:#6e6e73;
+
+    --c-blue:#0a84ff;
+    --c-purple:#bf5af2;
+    --c-pink:#ff375f;
+    --c-orange:#ff9f0a;
+    --c-teal:#34d8c4;
+    --c-green:#30d158;
+    --c-red:#ff453a;
+
+    --orb-a:var(--c-blue);
+    --orb-b:var(--c-purple);
+    --orb-c:var(--c-pink);
+    --orb-d:var(--c-orange);
+    --orb-speed:18s;
+
+    --cta-a:var(--c-blue);
+    --cta-b:var(--c-purple);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(ellipse 900px 500px at 50% -10%, rgba(120,80,255,0.14), transparent 60%),
+      linear-gradient(180deg, var(--bg-0), var(--bg-1) 40%, var(--bg-2));
+    color:var(--text-0);
+    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", "Segoe UI", sans-serif;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; }
+  }
+
+  a,button{ font-family:inherit; }
+
+  .wrap{ max-width:980px; margin:0 auto; padding:0 24px 120px; }
+
+  /* ---------- HERO ---------- */
+  .hero{ text-align:center; padding:96px 24px 48px; position:relative; }
+  .eyebrow{
+    display:inline-block; font-size:12px; letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--text-2); font-weight:600; margin-bottom:22px;
+  }
+  .hero h1{
+    font-size:clamp(34px,6vw,58px); font-weight:700; letter-spacing:-0.03em; line-height:1.05;
+    margin:0 0 14px;
+    background:linear-gradient(180deg,#ffffff, #b9b9c0);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .hero p{ font-size:19px; color:var(--text-1); max-width:520px; margin:0 auto; line-height:1.5; }
+
+  /* ---------- ORB ---------- */
+  .orb-stage{
+    position:relative; width:220px; height:220px; margin:44px auto 8px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .orb-halo{
+    position:absolute; inset:-40px; border-radius:50%;
+    background:radial-gradient(circle, var(--orb-a) 0%, transparent 65%);
+    filter:blur(38px); opacity:0.45; transition:opacity 0.8s ease;
+    animation:halo-breathe 6s ease-in-out infinite;
+  }
+  @keyframes halo-breathe{ 0%,100%{ transform:scale(0.94); opacity:0.35;} 50%{ transform:scale(1.05); opacity:0.55;} }
+
+  .orb{
+    width:150px; height:150px; border-radius:50%; position:relative; z-index:2;
+    background:conic-gradient(from 0deg, var(--orb-a), var(--orb-b), var(--orb-c), var(--orb-d), var(--orb-a));
+    animation:orb-spin var(--orb-speed) linear infinite;
+    box-shadow:0 0 60px -6px var(--orb-a), inset 0 0 40px rgba(255,255,255,0.12);
+    transition:box-shadow 0.6s ease;
+  }
+  .orb::before{
+    content:''; position:absolute; inset:3px; border-radius:50%;
+    background:radial-gradient(circle at 32% 28%, rgba(255,255,255,0.55), rgba(255,255,255,0) 45%),
+               radial-gradient(circle at 65% 70%, var(--orb-c), var(--orb-b) 60%, transparent 75%);
+    filter:blur(2px);
+  }
+  .orb::after{
+    content:''; position:absolute; inset:0; border-radius:50%;
+    backdrop-filter:blur(0.5px);
+    box-shadow:inset 0 -20px 40px rgba(0,0,0,0.25);
+  }
+  @keyframes orb-spin{ to{ transform:rotate(360deg);} }
+
+  .orb-stage.processing .orb{ animation-duration:2.4s; }
+  .orb-stage.processing .orb-halo{ animation-duration:1.6s; opacity:0.6; }
+  .orb-stage.success .orb-halo{ opacity:0.5; }
+  .orb-stage.error .orb{ animation-play-state:paused; }
+  .orb-stage.error .orb-halo{ animation:halo-alarm 1s ease-in-out infinite; }
+  @keyframes halo-alarm{ 0%,100%{ opacity:0.35; transform:scale(0.96);} 50%{ opacity:0.7; transform:scale(1.08);} }
+
+  .orb-status{ text-align:center; margin-top:20px; font-size:14px; color:var(--text-1); min-height:20px; letter-spacing:0.01em; }
+  .orb-status .dot{ display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--orb-a); margin-right:8px; vertical-align:middle; transition:background 0.5s ease;}
+
+  /* ---------- GLASS CARD ---------- */
+  .card{
+    background:var(--glass);
+    border:1px solid var(--line);
+    border-radius:22px;
+    backdrop-filter:blur(20px) saturate(140%);
+    padding:32px;
+    margin-top:20px;
+    transition:background 0.3s ease, border-color 0.3s ease;
+  }
+  .card:hover{ background:var(--glass-hover); }
+  .card h2{ font-size:15px; font-weight:600; letter-spacing:0.01em; margin:0 0 4px; color:var(--text-0); }
+  .card .sub{ font-size:13px; color:var(--text-2); margin:0 0 22px; }
+  .section-label{
+    display:flex; align-items:center; gap:10px; font-size:12px; color:var(--text-2);
+    text-transform:uppercase; letter-spacing:0.12em; font-weight:600; margin:56px 0 0;
+  }
+  .section-label .n{
+    width:22px;height:22px;border-radius:50%;border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text-1);
+  }
+
+  /* ---------- UPLOAD ---------- */
+  .dropzone{
+    border:1.5px dashed rgba(255,255,255,0.16);
+    border-radius:16px; padding:36px 24px; text-align:center; cursor:pointer;
+    transition:border-color 0.25s ease, background 0.25s ease;
+  }
+  .dropzone:hover, .dropzone.drag{ border-color:var(--c-blue); background:rgba(10,132,255,0.06); }
+  .dropzone .icon{ font-size:28px; margin-bottom:10px; opacity:0.8; }
+  .dropzone .file-name{ margin-top:10px; font-size:13px; color:var(--c-teal); font-weight:500; }
+  .dropzone input{ display:none; }
+  .dropzone p{ margin:0; font-size:14px; color:var(--text-1); }
+  .dropzone .hint{ font-size:12px; color:var(--text-2); margin-top:4px; }
+
+  .field{ margin-top:18px; }
+  .field label{ display:block; font-size:12px; color:var(--text-2); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.08em; font-weight:600; }
+  .field input[type=text]{
+    width:100%; padding:13px 16px; border-radius:12px; border:1px solid var(--line);
+    background:rgba(255,255,255,0.03); color:var(--text-0); font-size:14px; outline:none;
+    transition:border-color 0.2s ease;
+  }
+  .field input[type=text]:focus{ border-color:var(--c-blue); }
+  .field input[type=text]::placeholder{ color:var(--text-2); }
+
+  .btn{
+    appearance:none; border:none; cursor:pointer; border-radius:980px;
+    padding:14px 30px; font-size:15px; font-weight:600; color:#fff;
+    background:linear-gradient(135deg, var(--cta-a), var(--cta-b));
+    box-shadow:0 8px 24px -8px var(--cta-a);
+    transition:transform 0.15s ease, box-shadow 0.3s ease, background 0.5s ease, opacity 0.3s ease;
+    display:inline-flex; align-items:center; gap:8px;
+  }
+  .btn:hover:not(:disabled){ transform:translateY(-1px); box-shadow:0 10px 30px -6px var(--cta-a); }
+  .btn:active:not(:disabled){ transform:translateY(0); }
+  .btn:disabled{ opacity:0.4; cursor:not-allowed; }
+  .btn.full{ width:100%; justify-content:center; margin-top:22px; padding:15px; }
+  .btn.ghost{
+    background:rgba(255,255,255,0.06); box-shadow:none; color:var(--text-0);
+    border:1px solid var(--line);
+  }
+  .btn.ghost:hover:not(:disabled){ background:rgba(255,255,255,0.1); }
+  .btn .spinner{
+    width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,0.4);
+    border-top-color:#fff; animation:spin 0.7s linear infinite; display:none;
+  }
+  .btn.loading .spinner{ display:inline-block; }
+  .btn.loading .label-text{ opacity:0.7; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+
+  /* ---------- PIPELINE RAIL ---------- */
+  .rail{ position:relative; padding:8px 4px 4px; }
+  .rail-track{
+    position:relative; display:flex; overflow-x:auto; gap:0; padding:12px 0 22px;
+    scrollbar-width:none;
+  }
+  .rail-track::-webkit-scrollbar{ display:none; }
+  .rail-line{
+    position:absolute; top:29px; left:20px; right:20px; height:2px;
+    background:var(--line); z-index:0; border-radius:2px;
+  }
+  .rail-line-fill{
+    position:absolute; top:29px; left:20px; height:2px; width:0%;
+    background:linear-gradient(90deg, var(--c-blue), var(--c-teal));
+    border-radius:2px; z-index:1; transition:width 0.6s ease;
+  }
+  .stage{
+    position:relative; z-index:2; flex:0 0 auto; width:104px; text-align:center;
+  }
+  .stage .node{
+    width:36px;height:36px;border-radius:50%; margin:0 auto 10px;
+    background:var(--bg-2); border:2px solid var(--line);
+    display:flex; align-items:center; justify-content:center;
+    font-size:12px; font-weight:700; color:var(--text-2);
+    transition:all 0.4s ease;
+  }
+  .stage .name{ font-size:11px; color:var(--text-2); line-height:1.3; padding:0 4px; transition:color 0.3s ease;}
+  .stage.active .node{
+    border-color:var(--c-orange); color:var(--c-orange); background:rgba(255,159,10,0.1);
+    animation:node-pulse 1.1s ease-in-out infinite;
+    box-shadow:0 0 18px -2px var(--c-orange);
+  }
+  .stage.active .name{ color:var(--text-0); }
+  @keyframes node-pulse{ 0%,100%{ transform:scale(1);} 50%{ transform:scale(1.12);} }
+  .stage.done .node{
+    border-color:var(--c-teal); color:var(--c-teal); background:rgba(52,216,196,0.1);
+  }
+  .stage.done .node::after{ content:'✓'; }
+  .stage.done .name{ color:var(--text-1); }
+  .stage.error .node{ border-color:var(--c-red); color:var(--c-red); background:rgba(255,69,58,0.12); }
+  .stage.error .node::after{ content:'!'; }
+
+  /* ---------- RESULTS ---------- */
+  .metrics-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(140px,1fr)); gap:14px; margin-bottom:22px;}
+  .metric{
+    background:rgba(255,255,255,0.03); border:1px solid var(--line); border-radius:16px;
+    padding:18px; text-align:left;
+  }
+  .metric .val{ font-size:26px; font-weight:700; letter-spacing:-0.02em; color:var(--text-0);}
+  .metric .lbl{ font-size:12px; color:var(--text-2); margin-top:4px; }
+
+  .insight-list{ list-style:none; padding:0; margin:0; }
+  .insight-list li{
+    padding:14px 0; border-bottom:1px solid var(--line); font-size:14px; color:var(--text-1); line-height:1.5;
+  }
+  .insight-list li:last-child{ border-bottom:none; }
+  .insight-list li::before{ content:'—'; color:var(--c-purple); margin-right:10px; }
+
+  .download-row{ display:flex; flex-wrap:wrap; gap:12px; margin-top:24px; }
+
+  .empty-note{ font-size:13px; color:var(--text-2); text-align:center; padding:20px 0; }
+
+  .preview-table{ width:100%; border-collapse:collapse; font-size:13px; margin-top:16px; overflow:auto; display:block; max-height:260px;}
+  .preview-table th{ text-align:left; padding:8px 10px; color:var(--text-2); font-weight:600; border-bottom:1px solid var(--line); position:sticky; top:0; background:var(--bg-2);}
+  .preview-table td{ padding:8px 10px; border-bottom:1px solid rgba(255,255,255,0.04); color:var(--text-1); white-space:nowrap; }
+
+  .toast{
+    position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:rgba(30,30,34,0.9); border:1px solid var(--line); backdrop-filter:blur(16px);
+    color:var(--text-0); padding:13px 22px; border-radius:14px; font-size:13.5px;
+    opacity:0; pointer-events:none; transition:all 0.35s ease; z-index:50; max-width:80vw;
+  }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+  .toast.err{ border-color:rgba(255,69,58,0.4); }
+
+  footer{ text-align:center; color:var(--text-2); font-size:12px; padding:60px 0 20px; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="hero">
+    <span class="eyebrow">Sales Intelligence Pipeline</span>
+    <h1>One click.<br>A finished model.</h1>
+    <p>Upload raw sales data. Watch every stage run. Walk away with a clean dataset, a trained model, and the insight behind it.</p>
+
+    <div class="orb-stage" id="orbStage">
+      <div class="orb-halo"></div>
+      <div class="orb"></div>
+    </div>
+    <div class="orb-status" id="orbStatus"><span class="dot"></span>Waiting for data</div>
+  </div>
+
+  <div class="section-label"><span class="n">01</span> Add your data</div>
+  <div class="card">
+    <h2>Raw dataset</h2>
+    <p class="sub">CSV only. Rows and columns exactly as exported from your source.</p>
+
+    <div class="dropzone" id="dropzone">
+      <div class="icon">⇧</div>
+      <p>Drop a CSV here, or click to choose one</p>
+      <div class="hint">.csv up to 200MB</div>
+      <div class="file-name" id="fileName"></div>
+      <input type="file" id="fileInput" accept=".csv">
+    </div>
+
+    <div class="field">
+      <label for="targetCol">Target column</label>
+      <input type="text" id="targetCol" placeholder="e.g. revenue">
+    </div>
+
+    <button class="btn full" id="runBtn" disabled>
+      <span class="spinner"></span>
+      <span class="label-text">Run pipeline</span>
+    </button>
+  </div>
+
+  <div class="section-label"><span class="n">02</span> Pipeline</div>
+  <div class="card">
+    <h2 id="railTitle">Idle</h2>
+    <p class="sub" id="railSub">Stages will appear here once the run starts.</p>
+    <div class="rail">
+      <div class="rail-track" id="railTrack">
+        <div class="rail-line"></div>
+        <div class="rail-line-fill" id="railFill"></div>
+        <!-- stage nodes injected by JS -->
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label"><span class="n">03</span> Results</div>
+  <div class="card" id="resultsCard">
+    <h2>Model output</h2>
+    <p class="sub">Metrics, insights, and everything you can take with you.</p>
+    <div id="resultsBody">
+      <div class="empty-note">Run the pipeline to see results here.</div>
+    </div>
+  </div>
+
+  <div class="section-label"><span class="n">04</span> Predict on new data</div>
+  <div class="card">
+    <h2>Score a new file</h2>
+    <p class="sub">Use the trained model on data it hasn't seen yet.</p>
+
+    <div class="dropzone" id="dropzonePredict">
+      <div class="icon">⇧</div>
+      <p>Drop a CSV to score, or click to choose one</p>
+      <div class="hint">Same columns as the training data, minus the target</div>
+      <div class="file-name" id="predictFileName"></div>
+      <input type="file" id="predictInput" accept=".csv">
+    </div>
+
+    <button class="btn full ghost" id="predictBtn" disabled>
+      <span class="spinner"></span>
+      <span class="label-text">Generate predictions</span>
+    </button>
+
+    <div id="predictBody"></div>
+  </div>
+
+  <footer>Runs entirely on your own server. Nothing leaves this machine.</footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  const STAGES = [
+    "Ingest", "Clean", "EDA", "Feature Eng.", "Encode",
+    "Select features", "Select model", "Train", "Evaluate",
+    "Insights", "Report", "Export"
+  ];
+
+  const orbStage = document.getElementById('orbStage');
+  const orbStatus = document.getElementById('orbStatus');
+  const railTrack = document.getElementById('railTrack');
+  const railFill = document.getElementById('railFill');
+  const railTitle = document.getElementById('railTitle');
+  const railSub = document.getElementById('railSub');
+  const toast = document.getElementById('toast');
+
+  let uploadedPath = null;
+  let predictPath = null;
+  let pollTimer = null;
+
+  // build rail nodes
+  STAGES.forEach((name, i) => {
+    const el = document.createElement('div');
+    el.className = 'stage';
+    el.dataset.index = i;
+    el.innerHTML = `<div class="node">${i+1}</div><div class="name">${name}</div>`;
+    railTrack.appendChild(el);
+  });
+
+  function showToast(msg, isErr){
+    toast.textContent = msg;
+    toast.className = 'toast show' + (isErr ? ' err' : '');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(()=> toast.classList.remove('show'), 3600);
+  }
+
+  function setOrbState(state){
+    orbStage.classList.remove('processing','success','error');
+    const root = document.documentElement.style;
+    if(state === 'idle'){
+      root.setProperty('--orb-a', 'var(--c-blue)');
+      root.setProperty('--orb-b', 'var(--c-purple)');
+      root.setProperty('--orb-c', 'var(--c-pink)');
+      root.setProperty('--orb-d', 'var(--c-orange)');
+      root.setProperty('--orb-speed', '18s');
+    } else if(state === 'processing'){
+      orbStage.classList.add('processing');
+      root.setProperty('--orb-a', 'var(--c-orange)');
+      root.setProperty('--orb-b', 'var(--c-pink)');
+      root.setProperty('--orb-c', 'var(--c-purple)');
+      root.setProperty('--orb-d', 'var(--c-blue)');
+    } else if(state === 'success'){
+      orbStage.classList.add('success');
+      root.setProperty('--orb-a', 'var(--c-teal)');
+      root.setProperty('--orb-b', 'var(--c-green)');
+      root.setProperty('--orb-c', 'var(--c-blue)');
+      root.setProperty('--orb-d', 'var(--c-teal)');
+      root.setProperty('--orb-speed', '10s');
+    } else if(state === 'error'){
+      orbStage.classList.add('error');
+      root.setProperty('--orb-a', 'var(--c-red)');
+      root.setProperty('--orb-b', 'var(--c-red)');
+    }
+  }
+
+  function setCTAColor(a, b){
+    document.documentElement.style.setProperty('--cta-a', a);
+    document.documentElement.style.setProperty('--cta-b', b);
+  }
+
+  function setStatusText(text){
+    orbStatus.innerHTML = `<span class="dot"></span>${text}`;
+  }
+
+  // ---------- Upload wiring (shared helper) ----------
+  function wireDropzone(zoneId, inputId, nameId, onFile){
+    const zone = document.getElementById(zoneId);
+    const input = document.getElementById(inputId);
+    const nameEl = document.getElementById(nameId);
+
+    zone.addEventListener('click', ()=> input.click());
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag'); });
+    zone.addEventListener('dragleave', ()=> zone.classList.remove('drag'));
+    zone.addEventListener('drop', e => {
+      e.preventDefault(); zone.classList.remove('drag');
+      if(e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+    });
+    input.addEventListener('change', ()=> {
+      if(input.files.length) handleFile(input.files[0]);
+    });
+
+    function handleFile(file){
+      if(!file.name.toLowerCase().endsWith('.csv')){
+        showToast('Please choose a .csv file', true);
+        return;
+      }
+      nameEl.textContent = file.name;
+      onFile(file);
+    }
+  }
+
+  wireDropzone('dropzone', 'fileInput', 'fileName', async (file) => {
+    setCTAColor('var(--c-blue)', 'var(--c-purple)');
+    try{
+      const fd = new FormData();
+      fd.append('file', file);
+      const res = await fetch('/api/upload', { method:'POST', body:fd });
+      const data = await res.json();
+      if(!res.ok) throw new Error(data.error || 'Upload failed');
+      uploadedPath = data.path;
+      document.getElementById('runBtn').disabled = false;
+      showToast('Dataset uploaded');
+    }catch(err){
+      showToast(err.message, true);
+    }
+  });
+
+  wireDropzone('dropzonePredict', 'predictInput', 'predictFileName', async (file) => {
+    try{
+      const fd = new FormData();
+      fd.append('file', file);
+      const res = await fetch('/api/upload', { method:'POST', body:fd });
+      const data = await res.json();
+      if(!res.ok) throw new Error(data.error || 'Upload failed');
+      predictPath = data.path;
+      document.getElementById('predictBtn').disabled = false;
+      showToast('File ready to score');
+    }catch(err){
+      showToast(err.message, true);
+    }
+  });
+
+  // ---------- Run pipeline ----------
+  document.getElementById('runBtn').addEventListener('click', async () => {
+    const btn = document.getElementById('runBtn');
+    const target = document.getElementById('targetCol').value.trim();
+    if(!uploadedPath){ showToast('Upload a CSV first', true); return; }
+    if(!target){ showToast('Enter the target column name', true); return; }
+
+    btn.disabled = true;
+    btn.classList.add('loading');
+    setOrbState('processing');
+    setCTAColor('var(--c-orange)', 'var(--c-pink)');
+    setStatusText('Starting pipeline…');
+    railTitle.textContent = 'Running';
+    railSub.textContent = 'This can take a few minutes depending on dataset size.';
+    resetRail();
+
+    try{
+      const res = await fetch('/api/run', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ path: uploadedPath, target_column: target })
+      });
+      const data = await res.json();
+      if(!res.ok) throw new Error(data.error || 'Could not start pipeline');
+      pollStatus();
+    }catch(err){
+      failRun(err.message);
+    }
+  });
+
+  function resetRail(){
+    document.querySelectorAll('.stage').forEach(s => s.classList.remove('active','done','error'));
+    railFill.style.width = '0%';
+  }
+
+  function pollStatus(){
+    clearInterval(pollTimer);
+    pollTimer = setInterval(async () => {
+      try{
+        const res = await fetch('/api/status');
+        const data = await res.json();
+        renderStatus(data);
+        if(data.state === 'success'){
+          clearInterval(pollTimer);
+          finishRun(data);
+        } else if(data.state === 'error'){
+          clearInterval(pollTimer);
+          failRun(data.message || 'Pipeline failed');
+        }
+      }catch(err){
+        clearInterval(pollTimer);
+        failRun('Lost connection to the server');
+      }
+    }, 800);
+  }
+
+  function renderStatus(data){
+    const idx = data.stage_index ?? -1;
+    const stages = document.querySelectorAll('.stage');
+    stages.forEach((s, i) => {
+      s.classList.remove('active','done','error');
+      if(i < idx) s.classList.add('done');
+      else if(i === idx) s.classList.add(data.state === 'error' ? 'error' : 'active');
+    });
+    const pct = Math.max(0, Math.min(100, (idx / STAGES.length) * 100));
+    railFill.style.width = pct + '%';
+    if(data.message) setStatusText(data.message);
+    if(idx >= 0 && idx < STAGES.length) railSub.textContent = `Stage ${idx+1} of ${STAGES.length} — ${STAGES[idx]}`;
+  }
+
+  function finishRun(data){
+    setOrbState('success');
+    setCTAColor('var(--c-teal)', 'var(--c-green)');
+    setStatusText('Pipeline complete');
+    railTitle.textContent = 'Done';
+    railSub.textContent = 'All stages completed successfully.';
+    railFill.style.width = '100%';
+    document.querySelectorAll('.stage').forEach(s => { s.classList.remove('active'); s.classList.add('done'); });
+
+    const btn = document.getElementById('runBtn');
+    btn.classList.remove('loading');
+    btn.disabled = false;
+
+    renderResults(data.results || {});
+    showToast('Pipeline finished');
+  }
+
+  function failRun(msg){
+    setOrbState('error');
+    setCTAColor('var(--c-red)', 'var(--c-red)');
+    setStatusText(msg || 'Something went wrong');
+    railTitle.textContent = 'Failed';
+    railSub.textContent = msg || 'Check the server logs for details.';
+    const btn = document.getElementById('runBtn');
+    btn.classList.remove('loading');
+    btn.disabled = false;
+    showToast(msg || 'Pipeline failed', true);
+  }
+
+  function renderResults(results){
+    const body = document.getElementById('resultsBody');
+    const metrics = results.metrics || {};
+    const insights = results.insights || [];
+    const downloads = results.downloads || {};
+
+    let html = '';
+
+    const metricKeys = Object.keys(metrics);
+    if(metricKeys.length){
+      html += '<div class="metrics-grid">';
+      metricKeys.forEach(k => {
+        html += `<div class="metric"><div class="val">${metrics[k]}</div><div class="lbl">${k}</div></div>`;
+      });
+      html += '</div>';
+    }
+
+    if(insights.length){
+      html += '<ul class="insight-list">';
+      insights.forEach(i => html += `<li>${i}</li>`);
+      html += '</ul>';
+    }
+
+    html += '<div class="download-row">';
+    if(downloads.cleaned_csv) html += `<a class="btn ghost" href="${downloads.cleaned_csv}" download><span class="label-text">Download cleaned CSV</span></a>`;
+    if(downloads.model_report) html += `<a class="btn ghost" href="${downloads.model_report}" download><span class="label-text">Model report</span></a>`;
+    if(downloads.eda_report) html += `<a class="btn ghost" href="${downloads.eda_report}" download><span class="label-text">EDA report</span></a>`;
+    if(downloads.export) html += `<a class="btn ghost" href="${downloads.export}" download><span class="label-text">Export (.zip)</span></a>`;
+    html += '</div>';
+
+    body.innerHTML = html || '<div class="empty-note">Pipeline finished but returned no results payload.</div>';
+  }
+
+  // ---------- Predict ----------
+  document.getElementById('predictBtn').addEventListener('click', async () => {
+    const btn = document.getElementById('predictBtn');
+    if(!predictPath){ showToast('Upload a file to score first', true); return; }
+    btn.disabled = true; btn.classList.add('loading');
+    try{
+      const res = await fetch('/api/predict', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ path: predictPath })
+      });
+      const data = await res.json();
+      if(!res.ok) throw new Error(data.error || 'Prediction failed');
+      renderPredictions(data);
+      showToast('Predictions ready');
+    }catch(err){
+      showToast(err.message, true);
+    }finally{
+      btn.disabled = false; btn.classList.remove('loading');
+    }
+  });
+
+  function renderPredictions(data){
+    const body = document.getElementById('predictBody');
+    let html = '';
+    if(data.preview && data.preview.length){
+      const cols = Object.keys(data.preview[0]);
+      html += '<table class="preview-table"><thead><tr>' + cols.map(c=>`<th>${c}</th>`).join('') + '</tr></thead><tbody>';
+      data.preview.forEach(row => {
+        html += '<tr>' + cols.map(c => `<td>${row[c]}</td>`).join('') + '</tr>';
+      });
+      html += '</tbody></table>';
+    }
+    if(data.download){
+      html += `<div class="download-row"><a class="btn ghost" href="${data.download}" download><span class="label-text">Download predictions</span></a></div>`;
+    }
+    body.innerHTML = html;
+  }
+
+  setOrbState('idle');
+})();
+</script>
+</body>
+</html>
