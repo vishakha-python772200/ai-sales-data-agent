@@ -86,6 +86,11 @@ def run_pipeline(raw_data_path: str = None, target_column: str = None) -> dict:
         logger.error(f"Pipeline stopped: could not read raw data. {e}")
         return {"success": False, "error": str(e), "stage": "load_raw_data"}
 
+    if target_column not in df.columns:
+        error_msg = f"Target column '{target_column}' not found in uploaded data."
+        logger.error(error_msg)
+        return {"success": False, "error": error_msg, "stage": "load_raw_data"}
+
     # ---------------------------------------------------------------
     # STAGE 1: Data Summary
     # ---------------------------------------------------------------
@@ -127,13 +132,27 @@ def run_pipeline(raw_data_path: str = None, target_column: str = None) -> dict:
     if datetime_cols:
         fe_df = fe_df.drop(columns=datetime_cols)
 
+    if target_column not in fe_df.columns:
+        error_msg = f"Target column '{target_column}' was lost during feature engineering."
+        return {"success": False, "error": error_msg, "stage": "FeatureEngineeringAgent"}
+
     # ---------------------------------------------------------------
     # STAGE 5: Encoding
     # ---------------------------------------------------------------
-    r = EncodingAgent().execute(fe_df)
+    # IMPORTANT: pull the target column out BEFORE encoding, so that if it's
+    # categorical (e.g. "Payment", "Product line"), EncodingAgent doesn't
+    # one-hot-encode it away into separate dummy columns and destroy the
+    # original column name that later stages look for.
+    target_series = fe_df[target_column].copy()
+    fe_df_features = fe_df.drop(columns=[target_column])
+
+    r = EncodingAgent().execute(fe_df_features)
     if not r["success"]:
         return {"success": False, "error": r["error"], "stage": "EncodingAgent"}
     encoded_df = r["result"]
+
+    # Put the untouched target column back in
+    encoded_df[target_column] = target_series.values
 
     # ---------------------------------------------------------------
     # STAGE 6: Feature Selection
@@ -149,6 +168,14 @@ def run_pipeline(raw_data_path: str = None, target_column: str = None) -> dict:
     # slipped past cleaning/encoding and would otherwise crash TrainingAgent.
     # ---------------------------------------------------------------
     selected_df = _force_numeric_safety_net(selected_df, target_column)
+
+    # If the target itself is still text (classification with string labels
+    # like "Cash"/"Credit card"), label-encode ONLY the target column here
+    # so downstream sklearn models get numeric labels to train on.
+    # (checks is_numeric_dtype rather than `== object`, since newer pandas
+    # can represent text columns as "string" dtype instead of "object")
+    if not pd.api.types.is_numeric_dtype(selected_df[target_column]):
+        selected_df[target_column] = selected_df[target_column].astype("category").cat.codes
 
     # ---------------------------------------------------------------
     # STAGE 7: Model Selection
