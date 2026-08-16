@@ -46,20 +46,31 @@ html, body, [class*="css"] {{ font-family: 'Inter', -apple-system, BlinkMacSyste
 .state-dot {{ width:6px; height:6px; border-radius:50%; background: var(--accent); box-shadow: 0 0 8px var(--accent-glow); }}
 .glass-card {{ background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.09); border-radius: 20px; padding: 28px 26px; margin-bottom: 20px; backdrop-filter: blur(20px); }}
 .section-label {{ font-family:'JetBrains Mono', monospace; font-size:11px; color: rgba(245,245,247,0.4); text-transform:uppercase; letter-spacing:0.1em; margin-bottom: 16px; }}
+.field-label {{ font-family:'JetBrains Mono', monospace; font-size:11px; color: rgba(245,245,247,0.45); text-transform:uppercase; letter-spacing:0.08em; margin: 18px 0 6px; }}
 [data-testid="stFileUploader"] {{ border: 1.5px dashed rgba(255,255,255,0.16); border-radius: 16px; padding: 10px; background: rgba(255,255,255,0.02); transition: border-color 0.3s ease; }}
 [data-testid="stFileUploader"]:hover {{ border-color: var(--accent); }}
 [data-testid="stFileUploaderDropzone"] {{ background: transparent; }}
-.stTextInput input {{ background: rgba(255,255,255,0.06) !important; border: 1px solid rgba(255,255,255,0.1) !important; border-radius: 12px !important; color: #F5F5F7 !important; }}
+[data-testid="stFileUploaderDropzone"] small, [data-testid="stFileUploaderDropzone"] span {{ color: rgba(245,245,247,0.55) !important; }}
+.stTextInput input, .stTextInput input::placeholder {{ color: #F5F5F7 !important; }}
+.stTextInput input {{ background: rgba(255,255,255,0.08) !important; border: 1px solid rgba(255,255,255,0.14) !important; border-radius: 12px !important; }}
 .stTextInput input:focus {{ border-color: var(--accent) !important; }}
+[data-testid="stSelectbox"] > div > div {{ background: rgba(255,255,255,0.08) !important; border: 1px solid rgba(255,255,255,0.14) !important; border-radius: 12px !important; color: #F5F5F7 !important; }}
+[data-testid="stSelectbox"] label {{ color: rgba(245,245,247,0.6) !important; }}
+[data-baseweb="popover"] {{ background: #14141a !important; }}
+[data-baseweb="menu"] {{ background: #14141a !important; }}
+[data-baseweb="menu"] li {{ color: #F5F5F7 !important; }}
+[data-baseweb="menu"] li:hover {{ background: rgba(255,255,255,0.08) !important; }}
 div.stButton > button, div.stDownloadButton > button {{ font-family: 'Inter', sans-serif; font-weight: 600; font-size: 15px; letter-spacing: -0.01em; color: white; background: linear-gradient(135deg, hsl(var(--hue), 90%, 58%), hsl(calc(var(--hue) + 30), 90%, 50%)); border: none; border-radius: 100px; padding: 12px 28px; box-shadow: 0 4px 24px -6px var(--accent-glow); transition: transform 0.2s cubic-bezier(.22,1,.36,1), box-shadow 0.4s ease; width: 100%; }}
 div.stButton > button:hover, div.stDownloadButton > button:hover {{ transform: translateY(-1px); box-shadow: 0 6px 30px -4px var(--accent-glow); color: white; }}
 div.stButton > button:active, div.stDownloadButton > button:active {{ transform: scale(0.97); }}
 div.stButton > button:disabled {{ opacity: 0.35; box-shadow: none; }}
+div.stDownloadButton > button {{ background: linear-gradient(135deg, hsl(214, 90%, 58%), hsl(244, 90%, 50%)); }}
 [data-testid="stMetric"] {{ background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.09); border-radius: 16px; padding: 16px 18px; }}
 [data-testid="stMetricValue"] {{ background: linear-gradient(135deg, hsl(152,70%,60%), hsl(172,70%,50%)); -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 700; }}
 .insight-line {{ padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.08); font-size: 14px; color: rgba(245,245,247,0.75); display:flex; gap: 10px; }}
 .insight-line:last-child {{ border-bottom: none; }}
 .insight-marker {{ color: var(--accent); font-weight: 700; }}
+.download-grid {{ display:grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px; }}
 .mega-download {{ background: linear-gradient(135deg, hsla(152,70%,45%,0.18), hsla(172,70%,45%,0.10)); border: 1px solid hsla(152,70%,55%,0.35); border-radius: 20px; padding: 26px; text-align: center; margin-top: 8px; }}
 .mega-download h3 {{ font-size: 18px; margin-bottom: 4px; }}
 .mega-download p {{ color: rgba(245,245,247,0.6); font-size: 13px; margin-bottom: 18px; }}
@@ -76,21 +87,45 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+# ---------------------------------------------------------------------
+# Upload section
+# ---------------------------------------------------------------------
 st.markdown('<div class="glass-card">', unsafe_allow_html=True)
 st.markdown('<div class="section-label">01 · Upload</div>', unsafe_allow_html=True)
 
 uploaded_file = st.file_uploader("Raw sales CSV", type=["csv"], label_visibility="collapsed")
-target_column = st.text_input("Target column", value=config.TARGET_COLUMN, placeholder="e.g. sales")
+
+target_column = None
+preview_df = None
+
+if uploaded_file is not None:
+    preview_df = pd.read_csv(uploaded_file)
+    st.dataframe(preview_df.head(5), use_container_width=True)
+
+    st.markdown('<div class="field-label">Target column — what should the model predict?</div>', unsafe_allow_html=True)
+    columns = list(preview_df.columns)
+    # default to config.TARGET_COLUMN only if it's an actual column in this file
+    default_index = columns.index(config.TARGET_COLUMN) if config.TARGET_COLUMN in columns else 0
+    target_column = st.selectbox(
+        "Target column",
+        options=columns,
+        index=default_index,
+        label_visibility="collapsed",
+    )
 
 run_clicked = st.button("Run pipeline", disabled=(uploaded_file is None), use_container_width=True)
 st.markdown('</div>', unsafe_allow_html=True)
 
-if run_clicked and uploaded_file is not None:
+# ---------------------------------------------------------------------
+# Run pipeline
+# ---------------------------------------------------------------------
+if run_clicked and uploaded_file is not None and target_column:
     st.session_state.app_state = "processing"
+    st.session_state.target_column_choice = target_column
     st.rerun()
 
 if st.session_state.app_state == "processing" and uploaded_file is not None:
-    preview_df = pd.read_csv(uploaded_file)
+    chosen_target = st.session_state.get("target_column_choice", target_column)
     save_csv(preview_df, config.RAW_DATA_FILE)
 
     stages = [
@@ -103,13 +138,16 @@ if st.session_state.app_state == "processing" and uploaded_file is not None:
         progress.progress(int((i + 1) / len(stages) * 100), text=label + "…")
         time.sleep(0.15)
 
-    result = run_pipeline(target_column=target_column)
+    result = run_pipeline(target_column=chosen_target)
     progress.progress(100, text="Done")
 
     st.session_state.pipeline_result = result
     st.session_state.app_state = "success" if result.get("success") else "error"
     st.rerun()
 
+# ---------------------------------------------------------------------
+# Results
+# ---------------------------------------------------------------------
 result = st.session_state.pipeline_result
 if result is not None:
     if result.get("success"):
@@ -133,9 +171,44 @@ if result is not None:
             st.caption("No insights returned.")
         st.markdown('</div>', unsafe_allow_html=True)
 
+        # -------------------------------------------------------------
+        # Downloads — dedicated cleaned-data button + combined bundle
+        # -------------------------------------------------------------
+        st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+        st.markdown('<div class="section-label">03 · Downloads</div>', unsafe_allow_html=True)
+
+        cleaned_path = result.get("cleaned_data_path")
+        report_path = result.get("model_report_path")
+        dcol1, dcol2 = st.columns(2)
+        with dcol1:
+            if cleaned_path and os.path.exists(cleaned_path):
+                with open(cleaned_path, "rb") as f:
+                    st.download_button(
+                        "🧹 Cleaned data (.csv)",
+                        f,
+                        file_name="cleaned_sales_data.csv",
+                        mime="text/csv",
+                        use_container_width=True,
+                    )
+            else:
+                st.caption("Cleaned data not available.")
+        with dcol2:
+            if report_path and os.path.exists(report_path):
+                with open(report_path, "rb") as f:
+                    st.download_button(
+                        "📄 Model report (.pdf)",
+                        f,
+                        file_name="model_report.pdf",
+                        mime="application/pdf",
+                        use_container_width=True,
+                    )
+            else:
+                st.caption("Report not available.")
+        st.markdown('</div>', unsafe_allow_html=True)
+
         st.markdown('<div class="mega-download">', unsafe_allow_html=True)
         st.markdown('<h3>📦 Get everything</h3>', unsafe_allow_html=True)
-        st.markdown('<p>Cleaned data, model report, and export bundle in one file</p>', unsafe_allow_html=True)
+        st.markdown('<p>Cleaned data, model, and report bundled into one zip</p>', unsafe_allow_html=True)
 
         export_path = result.get("export_path")
         if export_path and os.path.exists(export_path):
@@ -157,9 +230,12 @@ if result is not None:
         st.code(result.get("error"))
         st.markdown('</div>', unsafe_allow_html=True)
 
+# ---------------------------------------------------------------------
+# Predict on new data
+# ---------------------------------------------------------------------
 st.markdown("<hr>", unsafe_allow_html=True)
 st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-st.markdown('<div class="section-label">03 · Predict on new data</div>', unsafe_allow_html=True)
+st.markdown('<div class="section-label">04 · Predict on new data</div>', unsafe_allow_html=True)
 
 if not os.path.exists(config.MODEL_FILE):
     st.caption("Run the pipeline above first to train a model.")
