@@ -12,7 +12,6 @@ errors are caught, logged, and timed automatically by BaseAgent.
 """
 
 
-import os
 import sys
 import pandas as pd
 
@@ -35,6 +34,30 @@ from agents.report_agent import ReportAgent
 from agents.export_agent import ExportAgent
 
 logger = get_logger("main")
+
+
+def _force_numeric_safety_net(df: pd.DataFrame, target_column: str) -> pd.DataFrame:
+    """
+    Safety net: forces every feature column (everything except the target)
+    to numeric. Any stray garbage value that slipped past cleaning/encoding
+    (e.g. a stray backslash or other unparseable string) becomes NaN, then
+    gets filled with that column's median so training never crashes on it.
+    """
+    df = df.copy()
+    for col in df.columns:
+        if col == target_column:
+            continue
+        if df[col].dtype == object:
+            coerced = pd.to_numeric(df[col], errors="coerce")
+            if coerced.notna().any():
+                df[col] = coerced
+
+    numeric_cols = df.select_dtypes(include="number").columns
+    for col in numeric_cols:
+        if df[col].isnull().any():
+            df[col] = df[col].fillna(df[col].median())
+
+    return df
 
 
 def run_pipeline(raw_data_path: str = None, target_column: str = None) -> dict:
@@ -121,6 +144,13 @@ def run_pipeline(raw_data_path: str = None, target_column: str = None) -> dict:
     selected_df = r["result"]
 
     # ---------------------------------------------------------------
+    # SAFETY NET: force every feature column to numeric before modeling.
+    # Catches any stray non-numeric garbage (e.g. a lone backslash) that
+    # slipped past cleaning/encoding and would otherwise crash TrainingAgent.
+    # ---------------------------------------------------------------
+    selected_df = _force_numeric_safety_net(selected_df, target_column)
+
+    # ---------------------------------------------------------------
     # STAGE 7: Model Selection
     # ---------------------------------------------------------------
     r = ModelSelectionAgent().execute(selected_df, target_column=target_column)
@@ -180,137 +210,6 @@ def run_pipeline(raw_data_path: str = None, target_column: str = None) -> dict:
     return pipeline_results
 
 
-# =====================================================================
-# NEW — added for the web UI. Does not touch run_pipeline() above.
-# Same agents, same order, plus progress callbacks and a custom csv path
-# so the Flask server (server.py) can drive it and show live progress.
-# =====================================================================
-def run_pipeline_for_ui(csv_path, target_column, on_stage=None):
-    stages = [
-        "Ingest", "Clean", "EDA", "Feature Eng.", "Encode",
-        "Select features", "Select model", "Train", "Evaluate",
-        "Insights", "Report", "Export",
-    ]
-
-    def tick(i):
-        if on_stage:
-            on_stage(i, stages[i])
-
-    pipeline_results = {}
-
-    tick(0)
-    try:
-        df = read_csv(csv_path)
-    except Exception as e:
-        raise RuntimeError(f"Could not read raw data: {e}")
-
-    r = DataSummaryAgent().execute(df)
-    if not r["success"]:
-        raise RuntimeError(f"DataSummaryAgent: {r['error']}")
-    pipeline_results["data_summary"] = r["result"]
-
-    tick(1)
-    r = CleaningAgent().execute(df)
-    if not r["success"]:
-        raise RuntimeError(f"CleaningAgent: {r['error']}")
-    cleaned_df = r["result"]
-    cleaned_df.to_csv(config.CLEANED_DATA_FILE, index=False)
-    pipeline_results["cleaned_data_path"] = config.CLEANED_DATA_FILE
-
-    tick(2)
-    r = EDAAgent().execute(cleaned_df)
-    if not r["success"]:
-        raise RuntimeError(f"EDAAgent: {r['error']}")
-    pipeline_results["eda_report_path"] = r["result"]
-
-    tick(3)
-    r = FeatureEngineeringAgent().execute(cleaned_df)
-    if not r["success"]:
-        raise RuntimeError(f"FeatureEngineeringAgent: {r['error']}")
-    fe_df = r["result"]
-    datetime_cols = fe_df.select_dtypes(include=["datetime64[ns]"]).columns.tolist()
-    if datetime_cols:
-        fe_df = fe_df.drop(columns=datetime_cols)
-
-    tick(4)
-    r = EncodingAgent().execute(fe_df)
-    if not r["success"]:
-        raise RuntimeError(f"EncodingAgent: {r['error']}")
-    encoded_df = r["result"]
-
-    tick(5)
-    r = FeatureSelectionAgent().execute(encoded_df, target_column=target_column)
-    if not r["success"]:
-        raise RuntimeError(f"FeatureSelectionAgent: {r['error']}")
-    selected_df = r["result"]
-
-    tick(6)
-    r = ModelSelectionAgent().execute(selected_df, target_column=target_column)
-    if not r["success"]:
-        raise RuntimeError(f"ModelSelectionAgent: {r['error']}")
-    ms_result = r["result"]
-
-    tick(7)
-    r = TrainingAgent().execute(ms_result["best_model_name"], ms_result["X_train"], ms_result["y_train"])
-    if not r["success"]:
-        raise RuntimeError(f"TrainingAgent: {r['error']}")
-    train_result = r["result"]
-
-    tick(8)
-    r = EvaluationAgent().execute(train_result["model"], ms_result["X_test"], ms_result["y_test"])
-    if not r["success"]:
-        raise RuntimeError(f"EvaluationAgent: {r['error']}")
-    metrics = r["result"]
-
-    tick(9)
-    r = InsightAgent().execute(train_result["model"], list(ms_result["X_train"].columns), metrics)
-    if not r["success"]:
-        raise RuntimeError(f"InsightAgent: {r['error']}")
-    insights = r["result"]
-
-    tick(10)
-    r = ReportAgent().execute(ms_result["scores"], metrics, insights)
-    if not r["success"]:
-        raise RuntimeError(f"ReportAgent: {r['error']}")
-    model_report_path = r["result"]
-
-    tick(11)
-    r = ExportAgent().execute()
-    if not r["success"]:
-        raise RuntimeError(f"ExportAgent: {r['error']}")
-    export_path = r["result"]
-
-    metrics_out = {}
-    if isinstance(metrics, dict):
-        for k, v in metrics.items():
-            metrics_out[k] = round(v, 4) if isinstance(v, float) else v
-
-    insights_out = insights if isinstance(insights, list) else [str(insights)]
-
-    return {
-        "metrics": metrics_out,
-        "insights": insights_out,
-        "downloads": {
-            "cleaned_csv": f"/api/download-file?path={pipeline_results['cleaned_data_path']}",
-            "eda_report": f"/api/download-file?path={pipeline_results['eda_report_path']}",
-            "model_report": f"/api/download-file?path={model_report_path}",
-            "export": f"/api/download-file?path={export_path}",
-        },
-    }
-
-
-def predict_for_ui(csv_path):
-    df = read_csv(csv_path)
-    r = PredictionAgent().execute(df)
-    if not r["success"]:
-        raise RuntimeError(f"PredictionAgent: {r['error']}")
-    predictions_df = r["result"]
-
-    output_path = os.path.join(os.path.dirname(config.CLEANED_DATA_FILE), "predictions.csv")
-    predictions_df.to_csv(output_path, index=False)
-    return predictions_df, output_path
-
-
 if __name__ == "__main__":
     result = run_pipeline()
 
@@ -325,4 +224,3 @@ if __name__ == "__main__":
         print(f"\nPipeline FAILED at stage: {result.get('stage')}")
         print(f"Error: {result.get('error')}")
         sys.exit(1)
-        
